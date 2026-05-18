@@ -12,7 +12,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         
-        scene = new Scene(new MainPage(), 800, 600);
+        scene = new Scene(new MainPage(), 400, 866);
         
         stage.setScene(scene);
         stage.setTitle("F1 Weather App");
