@@ -1,0 +1,85 @@
+/* ============================= */
+/* ===== GLOBAL COLOURS ======== */
+/* ============================= */
+
+.root {
+    -color-primary: #E10600;   /* F1 red */
+    -color-white: #FFFFFF;
+    -color-black: #000000;
+    -color-gray: #808080;
+    -color-dark-gray: #2C2C2C;
+
+    -fx-background-color: -color-black;
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-font-size: 14px;
+}
+
+
+/* ============================= */
+/* ===== TEXT STYLES =========== */
+/* ============================= */
+
+.label {
+    -fx-text-fill: -color-white;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+}
+
+.subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: -color-gray;
+}
+
+.small-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-gray;
+}
+
+
+/* ============================= */
+/* ===== LAYOUT / CONTAINERS === */
+/* ============================= */
+
+.page {
+    -fx-padding: 20px;
+    -fx-background-color: -color-black;
+}
+
+.panel {
+    -fx-background-color: -color-dark-gray;
+    -fx-padding: 15px;
+    -fx-background-radius: 10px;
+}
+
+.card {
+    -fx-background-color: -color-dark-gray;
+    -fx-padding: 15px;
+    -fx-background-radius: 10px;
+    -fx-border-color: -color-gray;
+    -fx-border-radius: 10px;
+}
+
+
+/* ============================= */
+/* ===== BUTTONS =============== */
+/* ============================= */
+
+.button {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: derive(-color-primary, 20%);
+}
+
+.button-secondary {
+    -fx-background-color: -color-gray;
+    -fx-text-fill: -color-white;
+}
