@@ -51,11 +51,12 @@ public class OpenF1Client {
     public record RaceInfo(
             String raceId,
             String name,
-            String location
+            String location,
+            String dateStart
     ) {
         @Override
         public String toString() {
-            return String.format("%s - %s (Race ID: %s)", name, location, raceId);
+            return String.format("%s - %s (%s, Race ID: %s)", name, location, dateStart, raceId);
         }
     }
 
@@ -117,13 +118,14 @@ public class OpenF1Client {
         
         JSONArray array = new JSONArray(response.body());
         if (array.isEmpty()) {
-            return new RaceInfo(meetingKey, "Unknown Name", "Unknown Location");
+            return new RaceInfo(meetingKey, "Unknown Name", "Unknown Location", "Unknown Date");
         }
         JSONObject meeting = array.getJSONObject(0);
         String name = meeting.optString("meeting_name", "Unknown Name");
         String location = meeting.optString("location", "Unknown Location");
+        String dateStart = meeting.optString("date_start", "Unknown Date");
         
-        return new RaceInfo(meetingKey, name, location);
+        return new RaceInfo(meetingKey, name, location, dateStart);
     }
 
     public record RaceMeetings(
@@ -154,9 +156,20 @@ public class OpenF1Client {
             }
             String name = jsonObj.optString("meeting_name", "Unknown Name");
             String location = jsonObj.optString("location", "Unknown Location");
-            races.add(new RaceInfo(raceId, name, location));
+            String dateStart = jsonObj.optString("date_start", "Unknown Date");
+            races.add(new RaceInfo(raceId, name, location, dateStart));
         }
         return new RaceMeetings(races);
+    }
+
+    public RaceMeetings getMeetingsAfterDate( RaceMeetings meetings, String date ) {
+        List<RaceInfo> upcoming = new java.util.ArrayList<>();
+        for (RaceInfo race : meetings.races()) {
+            if (race.dateStart() != null && race.dateStart().compareTo(date) > 0) {
+                upcoming.add(race);
+            } 
+        }
+        return new RaceMeetings(upcoming);
     }
     
     // Quick test method
@@ -168,6 +181,13 @@ public class OpenF1Client {
             System.out.println("Found " + meetings.races().size() + " meetings in " + YEAR + ":");
             for (int i = 0; i < Math.min(3, meetings.races().size()); i++) { 
                 System.out.println(" - " + meetings.races().get(i));
+            }
+            
+            System.out.println("\nTesting getMeetingsAfterDate with May 1st, 2026...");
+            RaceMeetings upcomingMeetings = client.getMeetingsAfterDate(meetings, "2026-05-01T00:00:00+00:00");
+            System.out.println("Found " + upcomingMeetings.races().size() + " upcoming meetings after May 1st 2026.");
+            for (int i = 0; i < Math.min(3, upcomingMeetings.races().size()); i++) { 
+                System.out.println(" - " + upcomingMeetings.races().get(i));
             }
             
             System.out.println("\nFetching latest race info from OpenF1...");
