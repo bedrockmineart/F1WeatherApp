@@ -2,6 +2,8 @@ package com.f1weather;
 
 import javafx.scene.layout.VBox;
 
+import javafx.scene.control.Label;
+
 public class RaceDetails extends VBox {
 
     private final String sessionKey;
@@ -16,7 +18,10 @@ public class RaceDetails extends VBox {
         loadData();
     }
 
-    private void buildUI(){}
+    private void buildUI(){
+        Label title = new Label("Race Weather");
+        title.getStyleClass().add("title");
+    }
 
     private void loadData() {}
 }
