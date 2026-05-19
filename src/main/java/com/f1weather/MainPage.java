@@ -36,6 +36,14 @@ public class MainPage extends StackPane {
          // TODO:
         // get race list here
         // then pass in nicely
+        OpenF1Client client  = new OpenF1Client();
+        try {
+            OpenF1Client.RaceMeetings races = client.getCurrentYearMeetings()
+        }
+        catch
+        {
+
+        }
         VBox contentBox = new VBox(10); // 10px spacing between items
         for (int i = 1; i <= 50; i++) {
             Button b = new Button();
