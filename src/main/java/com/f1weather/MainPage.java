@@ -52,6 +52,10 @@ public class MainPage extends StackPane {
             b.setMaxWidth(Double.MAX_VALUE);
             b.getStyleClass().add("main-page-button");
             b.setGraphic(innerLayout);
+            String sessionKey = "latest"; // later replace with real race id
+            b.setOnAction(e -> {
+                App.setRoot(new RaceDetails(sessionKey));
+            });
             contentBox.getChildren().add(b);
         }
 
