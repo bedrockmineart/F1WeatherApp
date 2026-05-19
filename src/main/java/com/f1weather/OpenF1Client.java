@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 public class OpenF1Client {
 
     private static final String BASE_URL = "https://api.openf1.org/v1/";
+    private static final String YEAR = "2026"; 
     private final HttpClient httpClient;
 
     public OpenF1Client() {
@@ -123,12 +125,52 @@ public class OpenF1Client {
         
         return new RaceInfo(meetingKey, name, location);
     }
+
+    public record RaceMeetings(
+        List<RaceInfo> races
+    ) {
+
+    }
+
+    public RaceMeetings getCurrentYearMeetings() throws Exception {
+        String urlString = BASE_URL + "meetings?year=" + YEAR;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlString))
+                .GET()
+                .build();
+        
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to fetch upcoming races: HTTP " + response.statusCode());
+        }
+        JSONArray array = new JSONArray(response.body());
+        List<RaceInfo> races = new java.util.ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject jsonObj = array.getJSONObject(i);
+            String raceId = String.valueOf(jsonObj.optInt("meeting_key"));
+            if (raceId.equals("0")) {
+                raceId = jsonObj.optString("meeting_key", "unknown");
+            }
+            String name = jsonObj.optString("meeting_name", "Unknown Name");
+            String location = jsonObj.optString("location", "Unknown Location");
+            races.add(new RaceInfo(raceId, name, location));
+        }
+        return new RaceMeetings(races);
+    }
     
     // Quick test method
     public static void main(String[] args) {
         OpenF1Client client = new OpenF1Client();
         try {
-            System.out.println("Fetching latest race info from OpenF1...");
+            System.out.println("Fetching current year's meetings from OpenF1...");
+            RaceMeetings meetings = client.getCurrentYearMeetings();
+            System.out.println("Found " + meetings.races().size() + " meetings in " + YEAR + ":");
+            for (int i = 0; i < Math.min(3, meetings.races().size()); i++) { 
+                System.out.println(" - " + meetings.races().get(i));
+            }
+            
+            System.out.println("\nFetching latest race info from OpenF1...");
             RaceInfo raceInfo = client.getRaceInfo("latest");
             System.out.println("Race Info: " + raceInfo);
 
